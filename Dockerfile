@@ -1,16 +1,15 @@
 FROM centos:latest
-MAINTAINER Sleeck
 
 RUN yum install -y epel-release wget
 RUN wget http://packages.ntop.org/centos/ntop.repo -O /etc/yum.repos.d/ntop.repo
 RUN yum install -y ntopng
 RUN yum clean all
 
-RUN echo '#!/bin/bash' > /run.sh
-RUN echo '/usr/bin/redis-server /etc/redis.conf&' >> /run.sh
-RUN echo '/usr/local/bin/ntopng "$@"' >> /run.sh
-RUN chmod +x /run.sh
+COPY s6-overlay-amd64.tar.gz /tmp/
+RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
+ADD redis-run.sh /etc/services.d/redis/run
+ADD ntopng-run.sh /etc/services.d/ntopng/run
 
 EXPOSE 3000
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/init"]
