@@ -1,3 +1,4 @@
+#!/bin/bash
 curl -XPUT 192.168.2.18:9200/_template/ntopng -d '
 {
   "template" : "ntopng-*",
@@ -35,7 +36,25 @@ curl -XPUT 192.168.2.18:9200/_template/ntopng -d '
              }
        } ],
        "properties" : {
-         "@version": { "type": "string", "index": "not_analyzed" }
+          "@version": { "type": "string", "index": "not_analyzed" },
+          "IPV4_DST_ADDR": {
+            "type": "ip",
+            "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 128
+                }
+            }
+          },
+          "IPV4_SRC_ADDR": {
+            "type": "ip",
+            "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 128
+                }
+            }
+          }
        }
     }
   }
